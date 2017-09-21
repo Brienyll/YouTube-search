@@ -32,6 +32,7 @@ $(function () {
 })
 
 function search () {
+	
     // Clear results
     $('#results').html('');
     $('#buttons').html('');
@@ -44,6 +45,84 @@ function search () {
         "https://www.googleapis.com/youtube/v3/search", {
             part: 'snippet, id',
             q: q,
+            type: 'video',
+            key: 'AIzaSyDse77L7E-7rKRUlz311wceGTkIC-cfIg8'},
+            function (data) {
+                var nextPageToken = data.nextPageToken;
+                var prevPageToken = data.prevPageToken;
+
+                console.log(data);
+
+                $.each(data.items, function(i, item){
+                    var output = getOutput(item);
+
+                    // Display Results
+                    $('#results').append(output);
+                });
+
+                var buttons = getButtons(prevPageToken, nextPageToken);
+
+                //Display Buttons
+                $('#buttons').append(buttons);
+            }
+       );
+}
+
+function nextPage() {
+    var token = $('#next-button').data('token');
+	var q = $('#next-button').data('query');
+
+    $('#results').html('');
+    $('#buttons').html('');
+    
+    // Get Form input
+    q = $('#query').val();
+
+    // Run GET Request on API
+    $.get(
+        "https://www.googleapis.com/youtube/v3/search", {
+            part: 'snippet, id',
+            q: q,
+            pageToken: token,
+            type: 'video',
+            key: 'AIzaSyDse77L7E-7rKRUlz311wceGTkIC-cfIg8'},
+            function (data) {
+                var nextPageToken = data.nextPageToken;
+                var prevPageToken = data.prevPageToken;
+
+                console.log(data);
+
+                $.each(data.items, function(i, item){
+                    var output = getOutput(item);
+
+                    // Display Results
+                    $('#results').append(output);
+                });
+
+                var buttons = getButtons(prevPageToken, nextPageToken);
+
+                //Display Buttons
+                $('#buttons').append(buttons);
+            }
+       );
+}
+
+function prevPage() {
+    var token = $('#prev-button').data('token');
+	var q = $('#prev-button').data('query');
+
+    $('#results').html('');
+    $('#buttons').html('');
+    
+    // Get Form input
+    q = $('#query').val();
+
+    // Run GET Request on API
+    $.get(
+        "https://www.googleapis.com/youtube/v3/search", {
+            part: 'snippet, id',
+            q: q,
+            pageToken: token,
             type: 'video',
             key: 'AIzaSyDse77L7E-7rKRUlz311wceGTkIC-cfIg8'},
             function (data) {
